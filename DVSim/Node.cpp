@@ -17,6 +17,7 @@ private:
 	vector<Route> neighbors;
 	vector<Packet> dvPacket;
 	vector<Route> routingTable;
+	vector<int> convergence;
 
 public:
 	bool receiveDV(vector<Packet> dv, int id);
