@@ -1,31 +1,7 @@
 #include <vector>
+#include <iostream>
+#include "Node.h"
 using namespace std;
-
-struct Packet {
-	int cost;
-	int destination;
-};
-
-class Node {
-private:
-	struct Route {
-		int cost;
-		int destination;
-		int nextHop;
-	};
-	vector<int> neighbors;
-	vector<Packet> dvPacket;
-	vector<Route> routingTable;
-	int convergence;
-
-public:
-	bool receiveDV(vector<Packet> dv, int id);
-	vector<Packet> sendDV() { return dvPacket; }
-	void createDV();
-	Node() { }
-	void addNeighbor(int, int);
-	vector<int> getNeighbors() { return neighbors; }
-};
 
 void Node::createDV() {
 	dvPacket.clear();
@@ -37,36 +13,37 @@ void Node::createDV() {
 	}
 }
 
-bool Node::receiveDV(vector<Packet> dv, int id) {
-	int cost;
+bool Node::receiveDV(vector<Packet> dv, int sender) {
+	int costToSender;
 	bool found, changed;
 	Route route;
-
 	changed = false;
 	for (int i = 0; i < routingTable.size(); ++i) {
-		if (routingTable[i].destination == id) {
-			cost = routingTable[i].cost;
+		if (routingTable[i].destination == sender) {
+			costToSender = routingTable[i].cost;
 		}
 	}
 
 	for (int i = 0; i < dv.size(); ++i) {
 		found = false;
-		for (int j = 0; j < routingTable.size(); ++j) {
-			if (routingTable[j].destination == dv[i].destination) {
-				found = true;
-				if (routingTable[j].cost > dv[i].cost + cost) {
-					routingTable[j].cost = dv[i].cost + cost;
-					routingTable[j].nextHop = id;
-					changed = true;
+		if (dv[i].destination != id) {
+			for (int j = 0; j < routingTable.size(); ++j) {
+				if (routingTable[j].destination == dv[i].destination) {
+					found = true;
+					if (routingTable[j].cost > dv[i].cost + costToSender) {
+						routingTable[j].cost = dv[i].cost + costToSender;
+						routingTable[j].nextHop = sender;
+						changed = true;
+					}
 				}
 			}
-		}
-		if (!found) {
-			route.cost = dv[i].cost;
-			route.destination = dv[i].destination;
-			route.nextHop = id;
-			routingTable.push_back(route);
-			changed = true;
+			if (!found) {
+				route.cost = dv[i].cost + costToSender;
+				route.destination = dv[i].destination;
+				route.nextHop = sender;
+				routingTable.push_back(route);
+				changed = true;
+			}
 		}
 	}
 	return changed;
@@ -84,4 +61,24 @@ void Node::addNeighbor(int node, int dist) {
 	temp.nextHop = node;
 	neighbors.push_back(node);
 	routingTable.push_back(temp);
+}
+
+void Node::printRT(int id) {
+	cout << "\nThe routing table for " << id << endl;
+	for (int i = 0; i < routingTable.size(); ++i) {
+		cout << "destination: " << routingTable[i].destination << "\tcost: "
+			<< routingTable[i].cost << "\tNexthop: " << routingTable[i].nextHop << endl; 
+	}
+}
+
+int Node::routePacket(int data)
+{
+	int index = 0;
+	for (int i = 0; i < routingTable.size(); ++i) {
+		if (routingTable[i].destination == data) {
+			index = i;
+		}
+	}
+	
+	return routingTable[index].nextHop;
 }
