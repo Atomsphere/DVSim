@@ -1,8 +1,14 @@
+//*******************************
+//Definitions for functions delcared in Node.h
+//*****************************
 #include <vector>
 #include <iostream>
 #include "Node.h"
 using namespace std;
 
+//**********************************
+//createDV- constructs a dvpacket from the current routing table
+//**********************************
 void Node::createDV() {
 	dvPacket.clear();
 	for (int i = 0; i < routingTable.size(); ++i) {
@@ -13,6 +19,9 @@ void Node::createDV() {
 	}
 }
 
+//*********************************
+//receiveDV- handles the logic for incoming DV packets
+//**********************************
 bool Node::receiveDV(vector<Packet> dv, int sender) {
 	int costToSender;
 	bool found, changed;
@@ -49,11 +58,10 @@ bool Node::receiveDV(vector<Packet> dv, int sender) {
 	return changed;
 }
 
-//************
+//*****************************************
 //addNeighbor- takes the destination and the cost
-//records them as neighbors and initializes them in the
-//routing table
-//***********
+//records them as neighbors and initializes them in the routing table
+//*****************************************
 void Node::addNeighbor(int node, int dist) {
 	Route temp;
 	temp.cost = dist;
@@ -63,6 +71,9 @@ void Node::addNeighbor(int node, int dist) {
 	routingTable.push_back(temp);
 }
 
+//*************************************
+//printRT- prints the current routing table to the screen
+//*************************************
 void Node::printRT(int id) {
 	cout << "\nThe routing table for " << id << endl;
 	for (int i = 0; i < routingTable.size(); ++i) {
@@ -71,6 +82,10 @@ void Node::printRT(int id) {
 	}
 }
 
+//************************************
+//routePacket- takes an integer that represents a destination
+//returns the next hop
+//*************************************
 int Node::routePacket(int data)
 {
 	int index = 0;

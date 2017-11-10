@@ -3,9 +3,11 @@
 //CS 4310
 //Project 1
 //11-10-17
+//DV Packet simulator
 //************************************************
 #include<fstream>
 #include<iostream>
+#include<cstdlib>
 #include"Node.h"
 using namespace std;
 
@@ -15,12 +17,16 @@ int main(int argc, char *argv[]) {
 		cout << "Error: incorrect command line arguments found.";
 		return 1;
 	}
-	
+
 	int rounds = atoi(argv[2]);
 	int next = atoi(argv[3]);
 	int data = atoi(argv[4]);
-	
+
 	ifstream input(argv[1]);
+	if (!input) {
+		cout << "Input file not found.\n";
+		return 2;
+	}
 	vector<int> tempNodes;
 	Node * network;
 	int * changeTracker;
@@ -104,6 +110,7 @@ int main(int argc, char *argv[]) {
 		next = network[next].routePacket(data);
 		cout << next;
 	}
+	cout << endl;
 	
 	delete[] network;
 	delete[] changeTracker;

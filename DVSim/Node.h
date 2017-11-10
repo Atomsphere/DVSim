@@ -1,6 +1,12 @@
+//*************************************
+//Node is a single router of the network.
+//Primary function is to hold and define the functionality
+//for it's collection of a routing table and a DV packet
+//************************************
 #include<vector>
 #include"Packet.h"
 using namespace std;
+
 class Node {
 private:
 	struct Route {
@@ -24,4 +30,3 @@ public:
 	int routePacket(int);
 	int getNeighborCount() { return neighbors.size(); }
 };
-
